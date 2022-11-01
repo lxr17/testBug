@@ -1,6 +1,8 @@
 package com.example.testbug
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.MutableLiveData
@@ -19,6 +21,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        mBinding.lifecycleOwner = this
         mBinding.bean = bean
 
         GlobalScope.launch {
@@ -26,6 +29,24 @@ class MainActivity : AppCompatActivity() {
 
             bean.strLiveData.postValue("呵呵呵呵呵呵呵呵")
         }
+
+        mBinding.tv.setOnClickListener {
+            startActivity(Intent(this, MainActivity2::class.java))
+        }
+
+        Test.liveData.observe(this) {
+            Log.d("XXXXXXX", "${this.javaClass.simpleName} ${lifecycle.currentState}")
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d("XXXXXXX", "onStop")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d("XXXXXXX", "onPause")
     }
 
     class Bean {
